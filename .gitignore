@@ -1,0 +1,3 @@
+server/generated
+server/migrations
+node_modules
