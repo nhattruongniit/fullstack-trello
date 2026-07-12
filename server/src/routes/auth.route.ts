@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 
 import prisma from '../helpers/prisma-client.helper';
 import { LoginSchema, RegisterSchema } from '../schemas/auth.schema';
+import { redisStore } from '../helpers/redis';
 
 const router = express.Router();
 
@@ -27,10 +28,22 @@ router.post('/login', async (req, res) => {
     return res.status(400).json({ error: "Invalid email or password." });
   }
 
-  const { password: _, ...userWithoutPassword } = user;
+  const { password: _, ...userWithoutPassword } = user; 
 
   const payload = { ...userWithoutPassword };
   const token = jwt.sign(payload, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+
+  // save on redis
+  await redisStore.client.set(
+    `jwt:${user.id}`,
+    token,
+    {
+      expiration: {
+        type: 'EX',
+        value: 60 * 60 * 60 // 1 hour
+      }
+    }
+  );
 
   return res.status(200).json({ 
     message: 'Login successful', 
