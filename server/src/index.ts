@@ -4,6 +4,8 @@ import { z, ZodError } from 'zod';
 
 import authRouter from './routes/auth.route';
 import userRouter from './routes/user.route';
+import workspaceRouter from './routes/workspace.route';
+import workspaceMemberRouter from './routes/workspace-member.route';
 
 const app = express();
 const port = 3000;
@@ -18,6 +20,8 @@ app.get('/api', (_, res) => res.send('API running...'));
 // route
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
+app.use('/api/workspaces', workspaceRouter)
+app.use('/api/workspace-members', workspaceMemberRouter)
 
 app.use((err: any, _: any, res: any, next: any) => {
   if (err instanceof ZodError) {

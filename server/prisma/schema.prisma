@@ -8,11 +8,38 @@ generator client {
 }
 
 model User {
-  id          Int     @id @default(autoincrement())
-  email       String  @unique
-  password    String
-  first_name  String
-  last_name   String
-  phone       String? 
-  age         Int?
+  id               Int               @id @default(autoincrement())
+  email            String            @unique
+  password         String
+  first_name       String
+  last_name        String
+  phone            String?
+  age              Int?
+  workspaceMembers WorkspaceMember[]
 }
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
+}
+
+model Workspace {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  visibility  Visibility @default(PRIVATE)
+
+  created_at       DateTime          @default(now())
+  updated_at       DateTime          @updatedAt
+  workspaceMembers WorkspaceMember[]
+}
+
+model WorkspaceMember {
+  id Int @id @default(autoincrement())
+
+  user        User      @relation(fields: [userId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  userId      Int
+  workspaceId Int
+}
+
