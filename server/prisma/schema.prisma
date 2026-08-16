@@ -8,13 +8,17 @@ generator client {
 }
 
 model User {
-  id               Int               @id @default(autoincrement())
-  email            String            @unique
-  password         String
-  first_name       String
-  last_name        String
-  phone            String?
-  age              Int?
+  id         Int     @id @default(autoincrement())
+  email      String  @unique
+  password   String
+  first_name String
+  last_name  String
+  phone      String?
+  age        Int?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
   workspaceMembers WorkspaceMember[]
 }
 
@@ -29,9 +33,11 @@ model Workspace {
   description String?
   visibility  Visibility @default(PRIVATE)
 
-  created_at       DateTime          @default(now())
-  updated_at       DateTime          @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
   workspaceMembers WorkspaceMember[]
+  boards           Board[]
 }
 
 model WorkspaceMember {
@@ -43,3 +49,51 @@ model WorkspaceMember {
   workspaceId Int
 }
 
+model Board {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  background  String?    @default("#fff")
+  visibility  Visibility @default(PRIVATE)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId Int
+
+  lists List[]
+}
+
+model List {
+  id         Int     @id @default(autoincrement())
+  title      String
+  position   Int
+  background String? @default("#fff")
+
+  board   Board @relation(fields: [boardId], references: [id])
+  boardId Int
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  cards Card[]
+}
+
+model Card {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  position    Int
+  background  String? @default("#fff")
+  start_time   DateTime?
+  due_time     DateTime?
+
+  list   List @relation(fields: [listId], references: [id])
+  listId Int
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+}

@@ -18,7 +18,7 @@ export async function getListWorkspace() {
 
 export async function getWorkspaceById(id: number) {
   try {
-    const data = await prisma.workspace.findUnique({
+    const data = await prisma.workspace.findUniqueOrThrow({
       where: { id },
     });
     return Result.ok(data);
