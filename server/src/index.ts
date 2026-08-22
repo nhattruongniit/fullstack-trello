@@ -7,6 +7,8 @@ import userRouter from './routes/user.route';
 import workspaceRouter from './routes/workspace.route';
 import workspaceMemberRouter from './routes/workspace-member.route';
 import boardRouter from './routes/board.route';
+import listRouter from './routes/list.route';
+import cardRouter from './routes/card.route';
 
 const app = express();
 const port = 3000;
@@ -26,6 +28,8 @@ app.use('/api/workspaces', workspaceRouter)
 // app.use('/api/workspaces/:workspaceId/boards', boardRouter)
 app.use('/api/workspace-members', workspaceMemberRouter)
 app.use('/api/boards', boardRouter)
+app.use('/api/lists', listRouter)
+app.use('/api/cards', cardRouter)
 
 app.use((err: any, _: any, res: any, next: any) => {
   if (err instanceof ZodError) {
