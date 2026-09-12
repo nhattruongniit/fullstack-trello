@@ -1,55 +1,61 @@
-import { useState } from 'react';
-import { COLORS } from '../../../../configs';
-import Button from '../../../atoms/button';
+import { useState, useEffect } from 'react';
+import { COLORS } from '../../../configs';
+import Button from '../../atoms/button';
+import type { IBoard } from '../../../models/workspace.type';
 
-interface CreateBoardModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (data: CreateBoardFormData) => void;
-}
-
-export interface CreateBoardFormData {
+export interface EditBoardFormData {
   title: string;
   background: string;
   description: string;
   visibility: string;
 }
 
-function CreateBoardModal({
+interface EditBoardModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: EditBoardFormData) => void;
+  board: IBoard | null;
+}
+
+function EditBoardModal({
   isOpen,
   onClose,
   onSubmit,
-}: CreateBoardModalProps) {
-  const initialFormData: CreateBoardFormData = {
+  board,
+}: EditBoardModalProps) {
+  const [formData, setFormData] = useState<EditBoardFormData>({
     title: '',
     background: COLORS[0],
     description: '',
     visibility: 'PUBLIC',
-  };
-  const [formData, setFormData] = useState<CreateBoardFormData>(initialFormData);
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const data: CreateBoardFormData = {
-      title: formData.title,
-      description: formData.description,
-      background: formData.background,
-      visibility: formData.visibility
+  useEffect(() => {
+    if (board) {
+      setFormData({
+        title: board.title || '',
+        background: board.background || COLORS[0],
+        description: board.description || '',
+        visibility: board.visibility || 'PUBLIC',
+      });
     }
-    onSubmit(data);
-    setFormData(initialFormData);
+  }, [board, isOpen]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !board) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 bg-opacity-50">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Create New Board</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Edit Board</h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 cursor-pointer"
           >
             <svg
               className="h-6 w-6"
@@ -69,11 +75,11 @@ function CreateBoardModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="boardName" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="editBoardName" className="block text-sm font-medium text-gray-700">
               Board Name
             </label>
             <input
-              id="boardName"
+              id="editBoardName"
               type="text"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -84,26 +90,25 @@ function CreateBoardModal({
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="editDescription" className="block text-sm font-medium text-gray-700">
               Board Description
             </label>
             <input
-              id="description"
+              id="editDescription"
               type="text"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Enter board description"
               className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              autoFocus={false}
             />
           </div>
 
           <div>
-            <label htmlFor="boardColor" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="editVisibility" className="block text-sm font-medium text-gray-700">
               Visibility
             </label>
             <select
-              id="visibility"
+              id="editVisibility"
               value={formData.visibility}
               onChange={(e) => setFormData({ ...formData, visibility: e.target.value })}
               className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -114,7 +119,7 @@ function CreateBoardModal({
           </div>
 
           <div>
-            <label htmlFor="boardColor" className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700">
               Board Color
             </label>
             <div className="mt-2 flex gap-2">
@@ -137,7 +142,7 @@ function CreateBoardModal({
             </Button>
 
             <Button type="submit" variant="primary">
-              Create Board
+              Save Changes
             </Button>
           </div>
         </form>
@@ -146,4 +151,4 @@ function CreateBoardModal({
   );
 }
 
-export default CreateBoardModal;
+export default EditBoardModal;
