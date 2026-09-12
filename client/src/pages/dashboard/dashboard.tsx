@@ -1,63 +1,30 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Link } from 'react-router';
 import { toast } from 'react-toastify';
 
-import { createBoard } from '../../services/board.service';
-import { CreateBoardModal, type CreateBoardFormData } from '../../components/organisms/modal/create-board-modal';
+import { createBoard, updateBoard, removeBoard } from '../../services/board.service';
+import CreateBoardModal, { type CreateBoardFormData } from '../../components/organisms/modal/create-board-modal';
+import EditBoardModal, { type EditBoardFormData } from '../../components/organisms/modal/edit-board-modal';
+import ConfirmDeleteModal from '../../components/organisms/modal/confirm-delete-modal';
 import Loading from '../../components/atoms/loading';
-import type { IWorkspace } from '../../models/workspace.type';
+import type { IBoard, IWorkspace } from '../../models/workspace.type';
 import { getWorkspaces } from '../../services/workspace.service';
-
-function WorkspaceSection({ workspace, onCreateBoard }: { workspace: IWorkspace; onCreateBoard: () => void }) {
-  return (
-    <section className="mb-10">
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-sm font-semibold text-white">
-            {workspace.name.charAt(0).toUpperCase()}
-          </div>
-          <h2 className="text-lg font-semibold text-gray-900">{workspace.name}</h2>
-        </div>
-        <div className="flex items-center gap-3">
-          <button className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">
-            Boards
-          </button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {workspace.boards.map((board) => (
-          <Link
-            key={board.id}
-            to="/board"
-            className="group relative block h-24 overflow-hidden rounded-lg shadow-sm transition-shadow hover:shadow-md"
-          >
-            <div className={`h-full w-full ${board.background} p-3`}>
-              <span className="text-sm font-semibold text-white drop-shadow-sm">
-                {board.title}
-              </span>
-            </div>
-            <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
-          </Link>
-        ))}
-        <button
-          onClick={onCreateBoard}
-          className="flex h-24 w-full flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 cursor-pointer"
-        >
-          + Create new board
-        </button>
-      </div>
-    </section>
-  );
-}
+import WorkspaceSection from './components/workspace';
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
-  const { isPending, mutateAsync } = useMutation({
+  const { isPending: isCreating, mutateAsync: createBoardMutate } = useMutation({
     mutationFn: (data: CreateBoardFormData) => createBoard({ workspace_id: 7, data }),
-  })
-  
+  });
+
+  const { isPending: isUpdating, mutateAsync: updateBoardMutate } = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: EditBoardFormData }) => updateBoard({ id, data }),
+  });
+
+  const { isPending: isRemoving, mutateAsync: removeBoardMutate } = useMutation({
+    mutationFn: (id: number) => removeBoard(id),
+  });
+
   const { data: workspaces } = useQuery({
     queryKey: ['workspaces'],
     queryFn: getWorkspaces,
@@ -65,10 +32,12 @@ export default function Dashboard() {
 
   const [search, setSearch] = useState('');
   const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] = useState(false);
+  const [editingBoard, setEditingBoard] = useState<IBoard | null>(null);
+  const [removingBoard, setRemovingBoard] = useState<IBoard | null>(null);
 
   const handleCreateBoard = async (data: CreateBoardFormData) => {
     try {
-      await mutateAsync(data);
+      await createBoardMutate(data);
       queryClient.invalidateQueries({ queryKey: ['workspaces'] });
 
       toast.success('Created board successfully', {
@@ -87,6 +56,50 @@ export default function Dashboard() {
     }
   };
 
+  const handleEditBoard = async (data: EditBoardFormData) => {
+    if (!editingBoard) return;
+    try {
+      await updateBoardMutate({ id: editingBoard.id, data });
+      queryClient.invalidateQueries({ queryKey: ['workspaces'] });
+
+      toast.success('Updated board successfully', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setEditingBoard(null);
+    } catch (error) {
+      console.error('Error updating board:', error);
+    }
+  };
+
+  const handleConfirmRemove = async () => {
+    if (!removingBoard) return;
+    try {
+      await removeBoardMutate(removingBoard.id);
+      queryClient.invalidateQueries({ queryKey: ['workspaces'] });
+
+      toast.success('Removed board successfully', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setRemovingBoard(null);
+    } catch (error) {
+      console.error('Error removing board:', error);
+    }
+  };
+
   const filteredWorkspaces: IWorkspace[] = (workspaces ? workspaces.data : [])
     .map((workspace: IWorkspace) => ({
       ...workspace,
@@ -95,6 +108,8 @@ export default function Dashboard() {
       ),
     }))
     .filter((workspace: IWorkspace) => search === '' || workspace.boards.length > 0);
+
+  const isPending = isCreating || isUpdating || isRemoving;
 
   return (
     <>
@@ -128,6 +143,8 @@ export default function Dashboard() {
               key={workspace.id}
               workspace={workspace}
               onCreateBoard={() => setIsCreateBoardModalOpen(true)}
+              onEditBoard={(board) => setEditingBoard(board)}
+              onRemoveBoard={(board) => setRemovingBoard(board)}
             />
           ))}
           {filteredWorkspaces.length === 0 && (
@@ -139,6 +156,20 @@ export default function Dashboard() {
           isOpen={isCreateBoardModalOpen}
           onClose={() => setIsCreateBoardModalOpen(false)}
           onSubmit={handleCreateBoard}
+        />
+
+        <EditBoardModal
+          isOpen={Boolean(editingBoard)}
+          board={editingBoard}
+          onClose={() => setEditingBoard(null)}
+          onSubmit={handleEditBoard}
+        />
+
+        <ConfirmDeleteModal
+          isOpen={Boolean(removingBoard)}
+          boardTitle={removingBoard?.title}
+          onClose={() => setRemovingBoard(null)}
+          onConfirm={handleConfirmRemove}
         />
       </div>
     </>
