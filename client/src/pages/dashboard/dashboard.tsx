@@ -1,8 +1,13 @@
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Link } from 'react-router';
+import { toast } from 'react-toastify';
 
+import { createBoard } from '../../services/board.service';
 import { COLORS } from '../../configs';
 import { CreateBoardModal, type CreateBoardFormData } from '../../components/organisms/modal/create-board-modal';
+import Loading from '../../components/atoms/loading';
+
 
 interface BoardSummary {
   id: string;
@@ -111,11 +116,29 @@ function WorkspaceSection({ workspace, onCreateBoard }: { workspace: Workspace; 
 }
 
 export default function Dashboard() {
+  const { isPending, mutateAsync } = useMutation({
+    mutationFn: (data: CreateBoardFormData) => createBoard({ workspace_id: 7, data }),
+  })
   const [search, setSearch] = useState('');
   const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] = useState(false);
 
   const handleCreateBoard = async (data: CreateBoardFormData) => {
-    console.log('Creating board with data:', data);
+    try {
+      await mutateAsync(data);
+      toast.success('Created board successfully', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setIsCreateBoardModalOpen(false);
+    } catch (error) {
+      console.error('Error creating board:', error);
+    }
   };
 
   const filteredWorkspaces = workspaces
@@ -129,6 +152,8 @@ export default function Dashboard() {
 
   return (
     <>
+      {isPending && <Loading />}
+      
       <div className="min-h-screen bg-gray-50">
         <nav className="border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between px-6 py-3">
