@@ -1,67 +1,15 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { toast } from 'react-toastify';
 
 import { createBoard } from '../../services/board.service';
-import { COLORS } from '../../configs';
 import { CreateBoardModal, type CreateBoardFormData } from '../../components/organisms/modal/create-board-modal';
 import Loading from '../../components/atoms/loading';
+import type { IWorkspace } from '../../models/workspace.type';
+import { getWorkspaces } from '../../services/workspace.service';
 
-
-interface BoardSummary {
-  id: string;
-  name: string;
-  color: string;
-}
-
-interface Workspace {
-  id: string;
-  name: string;
-  members: { name: string; avatar: string }[];
-  boards: BoardSummary[];
-}
-
-const workspaces: Workspace[] = [
-  {
-    id: 'product',
-    name: 'Product Team',
-    members: [
-      { name: 'Bonnie Green', avatar: 'https://flowbite.com/application-ui/demo/images/users/bonnie-green.png' },
-      { name: 'Roberta Casas', avatar: 'https://flowbite.com/application-ui/demo/images/users/roberta-casas.png' },
-      { name: 'Michael Gough', avatar: 'https://flowbite.com/application-ui/demo/images/users/michael-gough.png' },
-    ],
-    boards: [
-      { id: 'hvac-editor', name: 'HVAC Editor', color: COLORS[0] },
-      { id: 'sprint-planning', name: 'Sprint Planning', color: COLORS[1] },
-      { id: 'bug-tracker', name: 'Bug Tracker', color: COLORS[2] },
-    ],
-  },
-  {
-    id: 'marketing',
-    name: 'Marketing',
-    members: [
-      { name: 'Bonnie Green', avatar: 'https://flowbite.com/application-ui/demo/images/users/bonnie-green.png' },
-      { name: 'Roberta Casas', avatar: 'https://flowbite.com/application-ui/demo/images/users/roberta-casas.png' },
-    ],
-    boards: [
-      { id: 'campaign-launch', name: 'Campaign Launch', color: COLORS[3] },
-      { id: 'content-calendar', name: 'Content Calendar', color: COLORS[4] },
-    ],
-  },
-  {
-    id: 'personal',
-    name: 'Personal',
-    members: [
-      { name: 'Bonnie Green', avatar: 'https://flowbite.com/application-ui/demo/images/users/bonnie-green.png' },
-    ],
-    boards: [
-      { id: 'reading-list', name: 'Reading List', color: COLORS[5] },
-    ],
-  },
-];
-
-function WorkspaceSection({ workspace, onCreateBoard }: { workspace: Workspace; onCreateBoard: () => void }) {
+function WorkspaceSection({ workspace, onCreateBoard }: { workspace: IWorkspace; onCreateBoard: () => void }) {
   return (
     <section className="mb-10">
       <div className="mb-4 flex items-center justify-between">
@@ -72,17 +20,6 @@ function WorkspaceSection({ workspace, onCreateBoard }: { workspace: Workspace; 
           <h2 className="text-lg font-semibold text-gray-900">{workspace.name}</h2>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex -space-x-2">
-            {workspace.members.map((member) => (
-              <img
-                key={member.name}
-                src={member.avatar}
-                alt={member.name}
-                title={member.name}
-                className="h-7 w-7 rounded-full border-2 border-white"
-              />
-            ))}
-          </div>
           <button className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">
             Boards
           </button>
@@ -96,9 +33,9 @@ function WorkspaceSection({ workspace, onCreateBoard }: { workspace: Workspace; 
             to="/board"
             className="group relative block h-24 overflow-hidden rounded-lg shadow-sm transition-shadow hover:shadow-md"
           >
-            <div className={`h-full w-full ${board.color} p-3`}>
+            <div className={`h-full w-full ${board.background} p-3`}>
               <span className="text-sm font-semibold text-white drop-shadow-sm">
-                {board.name}
+                {board.title}
               </span>
             </div>
             <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
@@ -116,15 +53,24 @@ function WorkspaceSection({ workspace, onCreateBoard }: { workspace: Workspace; 
 }
 
 export default function Dashboard() {
+  const queryClient = useQueryClient();
   const { isPending, mutateAsync } = useMutation({
     mutationFn: (data: CreateBoardFormData) => createBoard({ workspace_id: 7, data }),
   })
+  
+  const { data: workspaces } = useQuery({
+    queryKey: ['workspaces'],
+    queryFn: getWorkspaces,
+  });
+
   const [search, setSearch] = useState('');
   const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] = useState(false);
 
   const handleCreateBoard = async (data: CreateBoardFormData) => {
     try {
       await mutateAsync(data);
+      queryClient.invalidateQueries({ queryKey: ['workspaces'] });
+
       toast.success('Created board successfully', {
         position: "top-right",
         autoClose: 5000,
@@ -141,14 +87,14 @@ export default function Dashboard() {
     }
   };
 
-  const filteredWorkspaces = workspaces
-    .map((workspace) => ({
+  const filteredWorkspaces: IWorkspace[] = (workspaces ? workspaces.data : [])
+    .map((workspace: IWorkspace) => ({
       ...workspace,
       boards: workspace.boards.filter((board) =>
-        board.name.toLowerCase().includes(search.toLowerCase())
+        board.title.toLowerCase().includes(search.toLowerCase())
       ),
     }))
-    .filter((workspace) => search === '' || workspace.boards.length > 0);
+    .filter((workspace: IWorkspace) => search === '' || workspace.boards.length > 0);
 
   return (
     <>
