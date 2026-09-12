@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+.fill-brand {
+  fill: oklch(48.8% .243 264.376);
+}
+
+.text-neutral-tertiary {
+  color: oklch(96.7% .003 264.542);
+}

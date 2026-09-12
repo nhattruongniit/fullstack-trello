@@ -8,6 +8,9 @@ export async function getListWorkspace() {
     const data = await prisma.workspace.findMany({
       where: {
         visibility: 'PUBLIC'
+      },
+      include: {
+        boards: true
       }
     });
     return Result.ok(data);

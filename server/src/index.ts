@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import { z, ZodError } from 'zod';
+import cors from 'cors';
 
 import authRouter from './routes/auth.route';
 import userRouter from './routes/user.route';
@@ -17,6 +18,7 @@ app.get('/', (_, res) => {
   res.send('hello word')
 })
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.get('/api', (_, res) => res.send('API running...'));
