@@ -1,18 +1,9 @@
+import type { ITask } from "../../../models/board.type";
 
 interface EditTaskModalProps {
   toggleOpen: () => void;
-  editingTask: {
-    id: number;
-    title: string;
-    description: string;
-    assignees: { avatar: string, name: string }[];
-  };
-  setEditingTask: React.Dispatch<React.SetStateAction<{
-    id: number;
-    title: string;
-    description: string;
-    assignees: { avatar: string, name: string }[];
-  } | null>>;
+  editingTask: ITask;
+  setEditingTask: React.Dispatch<React.SetStateAction<ITask | null>>;
 }
 
 function EditTaskModal({ toggleOpen, editingTask, setEditingTask }: EditTaskModalProps ) {
