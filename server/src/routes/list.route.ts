@@ -1,6 +1,6 @@
 import express from "express";
 
-import * as listController from "../controllers/list.controller";
+import * as listController from "../controllers/list.controller.js";
 
 const router = express.Router({ mergeParams: true });
 

@@ -63,3 +63,23 @@ export async function removeBoard(id: number) {
     throw error;
   });
 }
+
+interface GetBoardProps {
+  id: number;
+  workspace_id: number;
+}
+
+export async function getBoard({ id, workspace_id }: GetBoardProps) {
+  return client.request({
+    url: `/api/boards/${id}`,
+    params: {
+      workspace_id
+    },
+    method: 'get',
+  })
+  .then(response => response.data)
+  .catch(error => {
+    console.error('Error fetching board:', error);
+    throw error;
+  });
+}

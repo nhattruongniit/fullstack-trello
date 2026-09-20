@@ -1,6 +1,6 @@
 import express from "express";
 
-import * as cardController from "../controllers/card.controller";
+import * as cardController from "../controllers/card.controller.js";
 
 const router = express.Router({ mergeParams: true });
 

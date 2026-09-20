@@ -1,6 +1,6 @@
-import prisma from '../helpers/prisma-client.helper';
-import type { CreateCardInput, UpdateCardInput } from '../schemas/card.schema';
-import { Result } from '../utils';
+import prisma from '../helpers/prisma-client.helper.js';
+import type { CreateCardInput, UpdateCardInput } from '../schemas/card.schema.js';
+import { Result } from '../utils/index.js';
 
 export async function getCards(listId: number) {
   try {

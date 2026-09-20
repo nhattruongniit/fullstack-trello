@@ -2,9 +2,9 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 
-import prisma from '../helpers/prisma-client.helper';
-import { LoginSchema, RegisterSchema } from '../schemas/auth.schema';
-import { redisStore } from '../helpers/redis';
+import prisma from '../helpers/prisma-client.helper.js';
+import { LoginSchema, RegisterSchema } from '../schemas/auth.schema.js';
+import { redisStore } from '../helpers/redis.js';
 
 const router = express.Router();
 

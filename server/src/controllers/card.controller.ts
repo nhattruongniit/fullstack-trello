@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 import { treeifyError } from 'zod'
-import * as cardService from '../services/card.service';
-import { CreateCardSchema, UpdateCardSchema } from '../schemas/card.schema';
-import { NumberOrStringSchema } from '../schemas/common.schema';
+import * as cardService from '../services/card.service.js';
+import { CreateCardSchema, UpdateCardSchema } from '../schemas/card.schema.js';
+import { NumberOrStringSchema } from '../schemas/common.schema.js';
 
 export async function getCards(req: Request, res: Response) {
   const { list_id: listId } = req.query;

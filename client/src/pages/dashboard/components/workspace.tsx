@@ -29,7 +29,7 @@ function WorkspaceSection({ workspace, onCreateBoard, onEditBoard, onRemoveBoard
         {workspace.boards.map((board) => (
           <Link
             key={board.id}
-            to="/board"
+            to={`/board/${board.id}?workspace_id=${workspace.id}`}
             className="group relative block h-24 overflow-hidden rounded-lg shadow-sm transition-shadow hover:shadow-md"
           >
             <div className={`h-full w-full ${board.background} p-3`}>

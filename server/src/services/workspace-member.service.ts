@@ -1,6 +1,6 @@
-import prisma from '../helpers/prisma-client.helper';
-import type { AddWorkspaceMemberInput } from '../schemas/workspace-member.schema';
-import { Result } from '../utils';
+import prisma from '../helpers/prisma-client.helper.js';
+import type { AddWorkspaceMemberInput } from '../schemas/workspace-member.schema.js';
+import { Result } from '../utils/index.js';
 
 export async function addMember(data: AddWorkspaceMemberInput) {
   try {
