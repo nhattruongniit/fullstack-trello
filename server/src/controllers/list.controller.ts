@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 import { treeifyError } from 'zod'
-import { CreateListSchema, UpdateListSchema } from '../schemas/list.schema';
-import { NumberOrStringSchema } from '../schemas/common.schema';
-import * as listService from '../services/list.service';
+import { CreateListSchema, UpdateListSchema } from '../schemas/list.schema.js';
+import { NumberOrStringSchema } from '../schemas/common.schema.js';
+import * as listService from '../services/list.service.js';
 
 export async function getLists(req: Request, res: Response) {
   const { board_id: boardId } = req.query;

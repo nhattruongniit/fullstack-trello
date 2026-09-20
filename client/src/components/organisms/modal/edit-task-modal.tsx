@@ -88,7 +88,7 @@ function EditTaskModal({ toggleOpen, editingTask, setEditingTask }: EditTaskModa
                 </label>
                 <div className="flex items-center space-x-3 mb-3">
                   <div className="flex -space-x-2">
-                    {editingTask.assignees.map((assignee, index) => (
+                    {(editingTask.assignees || []).map((assignee, index) => (
                       <img
                         key={index}
                         src={assignee.avatar}
@@ -116,7 +116,7 @@ function EditTaskModal({ toggleOpen, editingTask, setEditingTask }: EditTaskModa
                     <label key={priority} className="flex items-center">
                       <input
                         type="checkbox"
-                        checked={priority === 'Low'}
+                        checked={editingTask.priority === priority.toLowerCase()}
                         className="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500"
                       />
                       <span className="ml-2 text-sm text-gray-700">{priority}</span>

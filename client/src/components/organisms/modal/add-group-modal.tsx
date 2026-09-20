@@ -7,9 +7,10 @@ interface AddGroupModalProps {
     name: string;
     description: string;
   }>>;
+  handleAddGroup: () => void;
 }
 
-function AddGroupModal({ toggleOpen, newGroup, setNewGroup }: AddGroupModalProps) {
+function AddGroupModal({ toggleOpen, newGroup, setNewGroup, handleAddGroup }: AddGroupModalProps) {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
@@ -49,29 +50,18 @@ function AddGroupModal({ toggleOpen, newGroup, setNewGroup }: AddGroupModalProps
                 className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-
-            {/* Description */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description
-              </label>
-              <textarea
-                placeholder="Add a description here"
-                value={newGroup.description}
-                onChange={(e) => setNewGroup({ ...newGroup, description: e.target.value })}
-                rows={5}
-                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-              ></textarea>
-            </div>
           </div>
 
           {/* Footer Buttons */}
           <div className="flex justify-start space-x-3 mt-6">
-            <button className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+            <button 
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700" 
+              onClick={handleAddGroup}
+            >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              Add new task
+              Add new group
             </button>
             <button
               onClick={toggleOpen}

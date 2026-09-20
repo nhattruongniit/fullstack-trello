@@ -1,6 +1,6 @@
 import express from "express";
 
-import * as boardController from "../controllers/board.controller";
+import * as boardController from "../controllers/board.controller.js";
 
 const router = express.Router({ mergeParams: true});
 

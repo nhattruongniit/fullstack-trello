@@ -1,5 +1,5 @@
 import { useSortable } from '@dnd-kit/react/sortable';
-import type { IColumn, ITask } from '../../../models/board.type';
+import type { IColumn, ICard } from '../../../models/board.type';
 import BoardCard from './board-card';
 
 interface BoardListProps {
@@ -9,11 +9,11 @@ interface BoardListProps {
   openMenuId: string | null;
   setColumnToDelete: (id: string | null) => void;
   setDeleteConfirmOpen: (isOpen: boolean) => void;
-  handleEditTask: (task: ITask) => void;
-  setIsModalOpen: (isOpen: boolean) => void;
+  handleEditTask: (task: ICard) => void;
+  setCreateNewTaskModalOpen: (state: any) => void;
 }
 
-export default function BoardColumn({ column, index, openMenuId, setOpenMenuId, setColumnToDelete, setDeleteConfirmOpen, handleEditTask, setIsModalOpen }: BoardListProps) {
+export default function BoardColumn({ column, index, openMenuId, setOpenMenuId, setColumnToDelete, setDeleteConfirmOpen, handleEditTask, setCreateNewTaskModalOpen }: BoardListProps) {
   const { ref, handleRef, isDragging } = useSortable({
     id: column.id,
     index,
@@ -29,7 +29,7 @@ export default function BoardColumn({ column, index, openMenuId, setOpenMenuId, 
             {column.title}
           </h2>
           <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-            {column.tasks.length}
+            {column.cards.length}
           </span>
         </div>
         
@@ -70,11 +70,11 @@ export default function BoardColumn({ column, index, openMenuId, setOpenMenuId, 
 
       {/* Tasks */}
       <div className="space-y-3">
-        {column.tasks.map((task, taskIndex) => (
+        {column.cards.map((card, carIndex) => (
           <BoardCard
-            key={task.id}
-            task={task}
-            index={taskIndex}
+            key={card.id}
+            card={card}
+            index={carIndex}
             columnId={column.id}
             handleEditTask={handleEditTask}
           />
@@ -82,7 +82,7 @@ export default function BoardColumn({ column, index, openMenuId, setOpenMenuId, 
 
         {/* Add New Task Button */}
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => setCreateNewTaskModalOpen({ isOpen: true, column })}
           className="w-full py-2 text-sm font-medium text-gray-500 bg-white border border-gray-200 border-dashed rounded-lg hover:bg-gray-50 hover:text-gray-700 transition-colors"
         >
           + Add new task

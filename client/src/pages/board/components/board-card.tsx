@@ -1,18 +1,18 @@
 import { useSortable } from '@dnd-kit/react/sortable';
-import type { ITask } from '../../../models/board.type';
+import type { ICard } from '../../../models/board.type';
 
 interface BoardCardProps {
-  task: ITask;
+  card: ICard;
   index: number;
   columnId: string;
-  handleEditTask: (task: ITask) => void;
+  handleEditTask: (task: ICard) => void;
 }
 
-function BoardCard({ task, index, columnId, handleEditTask }: BoardCardProps) {
+function BoardCard({ card, index, columnId, handleEditTask }: BoardCardProps) {
   const { ref, isDragging } = useSortable({
-    id: task.id,
+    id: card.id,
     index,
-    type: 'task',
+    type: 'card',
     group: columnId,
   });
 
@@ -23,10 +23,10 @@ function BoardCard({ task, index, columnId, handleEditTask }: BoardCardProps) {
     >
       <div className="flex items-start justify-between mb-2 group">
         <h3 className="text-base font-semibold text-gray-900 flex-1">
-          {task.title}
+          {card.title}
         </h3>
         <button
-          onClick={() => handleEditTask(task)}
+          onClick={() => handleEditTask(card)}
           className="ml-2 text-gray-400 transition-opacity cursor-pointer"
           title="Edit task"
         >
@@ -38,24 +38,24 @@ function BoardCard({ task, index, columnId, handleEditTask }: BoardCardProps) {
       </div>
 
       {/* Task Image */}
-      {task.image && (
+      {card.image && (
         <img
-          src={task.image}
-          alt={task.title}
+          src={card.image}
+          alt={card.title}
           className="w-full h-32 object-cover rounded-lg mb-3"
         />
       )}
 
       {/* Task Description */}
       <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-        {task.description}
+        {card.description}
       </p>
 
       {/* Task Footer */}
       <div className="flex items-center justify-between">
         {/* Assignees */}
         <div className="flex -space-x-2">
-          {task.assignees.map((assignee, index) => (
+          {(card.assignees || []).map((assignee, index) => (
             <img
               key={index}
               src={assignee.avatar}
@@ -67,13 +67,13 @@ function BoardCard({ task, index, columnId, handleEditTask }: BoardCardProps) {
         </div>
 
         {/* Days Left / Status */}
-        {task.isDone ? (
+        {card.isDone ? (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
             Done
           </span>
-        ) : task.daysLeft !== undefined && (
+        ) : card.daysLeft !== undefined && (
           <span className="text-xs text-gray-500">
-            {task.daysLeft} day{task.daysLeft !== 1 ? 's' : ''} left
+            {card.daysLeft} day{card.daysLeft !== 1 ? 's' : ''} left
           </span>
         )}
       </div>

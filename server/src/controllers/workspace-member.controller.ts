@@ -1,9 +1,9 @@
 import type { Request, Response } from 'express';
 import { treeifyError } from 'zod'
 
-import { AddWorkspaceMemberSchema } from '../schemas/workspace-member.schema';
+import { AddWorkspaceMemberSchema } from '../schemas/workspace-member.schema.js';
 
-import * as workspaceMemberService from '../services/workspace-member.service';
+import * as workspaceMemberService from '../services/workspace-member.service.js';
 
 export async function addMember(req: Request, res: Response) {
   const validationResult = AddWorkspaceMemberSchema.safeParse({ ...req.body });

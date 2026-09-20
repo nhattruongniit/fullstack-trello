@@ -1,15 +1,14 @@
-import 'dotenv/config';
 import express from 'express';
 import { z, ZodError } from 'zod';
 import cors from 'cors';
 
-import authRouter from './routes/auth.route';
-import userRouter from './routes/user.route';
-import workspaceRouter from './routes/workspace.route';
-import workspaceMemberRouter from './routes/workspace-member.route';
-import boardRouter from './routes/board.route';
-import listRouter from './routes/list.route';
-import cardRouter from './routes/card.route';
+import authRouter from './routes/auth.route.js';
+import userRouter from './routes/user.route.js';
+import workspaceRouter from './routes/workspace.route.js';
+import workspaceMemberRouter from './routes/workspace-member.route.js';
+import boardRouter from './routes/board.route.js';
+import listRouter from './routes/list.route.js';
+import cardRouter from './routes/card.route.js';
 
 const app = express();
 const port = 3000;

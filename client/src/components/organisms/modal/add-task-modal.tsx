@@ -4,9 +4,10 @@ interface AddTaskModalProps {
   toggleOpen: () => void;
   newTask: any;
   setNewTask: React.Dispatch<React.SetStateAction<any | null>>;
+  handleAddTask: () => void;
 }
 
-function AddTaskModal({ toggleOpen, newTask, setNewTask }: AddTaskModalProps) {
+function AddTaskModal({ toggleOpen, newTask, setNewTask, handleAddTask }: AddTaskModalProps) {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div 
@@ -252,7 +253,10 @@ function AddTaskModal({ toggleOpen, newTask, setNewTask }: AddTaskModalProps) {
 
           {/* Footer Buttons */}
           <div className="flex justify-start space-x-3 mt-6 pt-6 border-t border-gray-200">
-            <button className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+            <button 
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer"
+              onClick={handleAddTask}
+            >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>

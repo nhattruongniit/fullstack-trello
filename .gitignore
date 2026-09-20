@@ -1,3 +1,6 @@
 generated
 migrations
 node_modules
+
+.env
+dist/

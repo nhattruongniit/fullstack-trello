@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Visibility } from '../../prisma/generated/prisma/enums'
+import { Visibility } from '../../prisma/generated/prisma/enums.js'
 
 export const CreateWorkspaceSchema = z.object({
   name: z.string().min(1),

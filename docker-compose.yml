@@ -28,3 +28,7 @@ volumes:
   postgres_data:
   redis_data:
     driver: local
+
+networks:
+  default:
+    driver: bridge

@@ -1,7 +1,7 @@
-import prisma from '../helpers/prisma-client.helper';
-import type { CreateBoardInput, UpdateBoardInput } from '../schemas/board.schema';
-import { Result } from '../utils';
-import { getWorkspaceById } from './workspace.service';
+import prisma from '../helpers/prisma-client.helper.js';
+import type { CreateBoardInput, UpdateBoardInput } from '../schemas/board.schema.js';
+import { Result } from '../utils/index.js';
+import { getWorkspaceById } from './workspace.service.js';
 
 export async function getBoards(workspaceId: number) {
   try {
@@ -23,6 +23,28 @@ export async function getBoardById(workspaceId: number, id: number) {
       where: { 
         id,
         workspaceId 
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        background: true,
+        lists: {
+          select: {
+            id: true,
+            title: true,
+            position: true,
+            cards: {
+              select: {
+                id: true,
+                title: true,
+                description: true,
+                position: true,
+                background: true,
+              }
+            }
+          }
+        }
       },
     });
     return Result.ok(data);

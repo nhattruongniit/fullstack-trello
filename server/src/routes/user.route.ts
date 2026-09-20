@@ -1,7 +1,7 @@
 import express from 'express';
 
-import prisma from '../helpers/prisma-client.helper';
-import authenticateToken from '../middlewares/auth.middleware';
+import prisma from '../helpers/prisma-client.helper.js';
+import authenticateToken from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 

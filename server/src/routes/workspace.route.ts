@@ -1,6 +1,6 @@
 import express from "express";
 
-import * as workspaceController from "../controllers/workspace.controller";
+import * as workspaceController from "../controllers/workspace.controller.js";
 
 const router = express.Router();
 

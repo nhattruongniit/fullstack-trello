@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { treeifyError } from 'zod'
-import * as workspaceService from '../services/workspace.service';
-import { UpdateWorkspaceSchema } from '../schemas/workspace.schema';
+import * as workspaceService from '../services/workspace.service.js';
+import { UpdateWorkspaceSchema } from '../schemas/workspace.schema.js';
 
 export async function getListWorkspaces(_: Request, res: Response) {
   const result = await workspaceService.getListWorkspace();

@@ -1,7 +1,7 @@
-import type { WorkspaceUpdateInput } from '../../prisma/generated/prisma/models/Workspace';
-import prisma from '../helpers/prisma-client.helper';
-import type { CreateWorkspaceInput, UpdateWorkspaceInput } from '../schemas/workspace.schema';
-import { Result } from '../utils';
+import type { WorkspaceUpdateInput } from '../../prisma/generated/prisma/models/Workspace.js';
+import prisma from '../helpers/prisma-client.helper.js';
+import type { CreateWorkspaceInput, UpdateWorkspaceInput } from '../schemas/workspace.schema.js';
+import { Result } from '../utils/index.js';
 
 export async function getListWorkspace() {
   try {

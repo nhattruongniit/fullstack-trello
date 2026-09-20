@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 import { treeifyError } from 'zod'
-import * as boardService from '../services/board.service';
-import { CreateBoardSchema, UpdateBoardSchema } from '../schemas/board.schema';
-import { NumberOrStringSchema } from '../schemas/common.schema';
+import * as boardService from '../services/board.service.js';
+import { CreateBoardSchema, UpdateBoardSchema } from '../schemas/board.schema.js';
+import { NumberOrStringSchema } from '../schemas/common.schema.js';
 
 export async function getBoards(req: Request, res: Response) {
   const { workspace_id: workspaceId } = req.query;
